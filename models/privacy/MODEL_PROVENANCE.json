@@ -1,0 +1,20 @@
+[
+  {
+    "file": "face_yunet.onnx",
+    "url": "https://huggingface.co/opencv/opencv_zoo/resolve/d4938dfc9d4ec5d098bfa33e98b3f3345a236586/models/face_detection_yunet/face_detection_yunet_2023mar.onnx",
+    "sha256": "8f2383e4dd3cfbb4553ea8718107fc0423210dc964f9f4280604804ed2552fa4",
+    "bytes": 232589
+  },
+  {
+    "file": "plate_yolov8n.onnx",
+    "url": "https://huggingface.co/joker5914/yolov8n-license-plate/resolve/8286762929bd4b111a19186f2a05e0a5940b6088/best.onnx",
+    "sha256": "a599289e5c25ab693fd7c6a152093f95fc34aef9b59b2c798127173e6e7ba2d9",
+    "bytes": 12265233
+  },
+  {
+    "file": "YUNET_LICENSE.txt",
+    "url": "https://raw.githubusercontent.com/opencv/opencv_zoo/main/models/face_detection_yunet/LICENSE",
+    "sha256": "c83b8120c50ccbd4c4f96edf53141bdd566ebb8f8e9227e415326aa1b1aba958",
+    "bytes": 1085
+  }
+]

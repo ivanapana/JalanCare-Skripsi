@@ -1,0 +1,7 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    // Private photos are served through authorized Flask routes.
+    match /{allPaths=**} { allow read, write: if false; }
+  }
+}

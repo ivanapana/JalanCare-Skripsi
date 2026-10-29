@@ -1,0 +1,1 @@
+{% extends 'base.html' %}{% block content %}<section class="card auth"><h1>{{ t('Proses belum dapat dilanjutkan','Unable to continue') }}</h1><p>{{ ui_text(message) }}</p><a class="button" href="{{ '/dashboard' if user else '/' }}">{{ t('Kembali','Go back') }}</a></section>{% endblock %}

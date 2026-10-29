@@ -1,0 +1,3 @@
+Salin bobot asli best_potholes.pt dari proyek lama ke folder ini.
+Nama harus tepat best_potholes.pt, bukan best_potholes.pt.zip.
+Tidak perlu training ulang untuk menjalankan website.

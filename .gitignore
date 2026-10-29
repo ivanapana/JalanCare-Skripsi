@@ -1,0 +1,52 @@
+.venv/
+.env
+secrets/*
+private/*
+models/*.pt
+__pycache__/
+.pytest_cache/
+
+
+# Python Virtual Environments
+.venv/
+.venv_gagal/
+venv/
+env/
+
+# Python Cache
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Environment Variables
+.env
+.env.*
+!.env.example
+
+# Sensitive Files and Credentials
+private/
+secrets/
+*.pem
+*.key
+*.p12
+*.pfx
+*service-account*.json
+*firebase-adminsdk*.json
+id_rsa
+id_ed25519
+
+# Local Application Data
+instance/
+*.sqlite3
+*.db
+
+# Local Uploads
+uploads/
+
+# Logs
+*.log
+
+# OS and Editor Files
+.DS_Store
+Thumbs.db
+.vscode/

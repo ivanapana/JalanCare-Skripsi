@@ -1,0 +1,2 @@
+JalanCare Revisi 2.8
+Alur verifikasi sederhana sesuai batasan skripsi: laporan lubang otomatis, kategori ditetapkan surveyor; formulir survei seluruh ruas tidak menjadi isian utama.
