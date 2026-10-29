@@ -1,4 +1,64 @@
 {% extends 'base.html' %}{% block content %}
-<section class="hero"><div><span class="eyebrow">{{ t('JALAN LEBIH BAIK, BERSAMA','BETTER ROADS, TOGETHER') }}</span><h1>{{ t('Satu laporan.','One report.') }}<br>{{ t('Langkah menuju','A step toward') }}<br><em>{{ t('jalan yang aman.','safer roads.') }}</em></h1><p>{{ t('Dokumentasikan lubang jalan, pastikan lokasi, dan pantau tindak lanjutnya. Untuk ruas jalan provinsi di Sulawesi Utara.','Document potholes, confirm their location, and track follow-up on provincial roads in North Sulawesi.') }}</p><div class="actions"><a class="button" href="{{ url_for('new_report') if user and user.role=='warga' else url_for('dashboard') if user else url_for('register') }}">{{ t('Mulai laporkan →','Start reporting →') }}</a><a class="button secondary" href="#how">{{ t('Cara kerja','How it works') }}</a></div><div class="herofoot">{{ t('3 sudut foto · Lokasi GPS · Riwayat penanganan','3 photo angles · GPS location · Status history') }}</div></div><div class="roadart" aria-label="Ilustrasi jalan"><div class="roadline"></div><div class="pothole"><span>Potholes</span></div><div class="artcard"><span class="dot"></span>{{ t('Dokumentasi membantu verifikasi','Documentation helps verification') }}<small>{{ t('Keputusan akhir oleh petugas dinas','Final assessment by authorized staff') }}</small></div></div></section>
-<section id="how"><span class="eyebrow">{{ t('MUDAH DIIKUTI','EASY TO FOLLOW') }}</span><h2>{{ t('Dari foto hingga tindak lanjut','From photos to follow-up') }}</h2><div class="grid3">{% for n,title,body in [('01',t('Ambil tiga foto','Take three photos'),t('Foto sisi kiri, kanan, dan tampak atas. Pastikan lubang terlihat jelas.','Photograph the left, right, and top views with the pothole clearly visible.')),('02',t('Periksa laporan','Review the report'),t('Setelah laporan tersimpan, periksa hasil deteksi dan narasinya.','After the report is saved, review its detections and narrative.')),('03',t('Pantau penanganan','Track progress'),t('Petugas memverifikasi laporan. Perubahan status tampil di riwayatmu.','Staff verify the report. Status changes appear in your history.'))] %}<article class="card"><span class="step">{{ n }}</span><h3>{{ title }}</h3><p>{{ body }}</p></article>{% endfor %}</div></section>
+<section class="hero">
+  <div>
+    <span class="eyebrow"
+      >{{ t('JALAN LEBIH BAIK, BERSAMA','BETTER ROADS, TOGETHER') }}</span
+    >
+    <h1>
+      {{ t('TEST CI/CD.','One report.') }}<br />{{ t('Langkah menuju','A step
+      toward') }}<br /><em>{{ t('jalan yang aman.','safer roads.') }}</em>
+    </h1>
+    <p>
+      {{ t('Dokumentasikan lubang jalan, pastikan lokasi, dan pantau tindak
+      lanjutnya. Untuk ruas jalan provinsi di Sulawesi Utara.','Document
+      potholes, confirm their location, and track follow-up on provincial roads
+      in North Sulawesi.') }}
+    </p>
+    <div class="actions">
+      <a
+        class="button"
+        href="{{ url_for('new_report') if user and user.role=='warga' else url_for('dashboard') if user else url_for('register') }}"
+        >{{ t('Mulai laporkan →','Start reporting →') }}</a
+      ><a class="button secondary" href="#how"
+        >{{ t('Cara kerja','How it works') }}</a
+      >
+    </div>
+    <div class="herofoot">
+      {{ t('3 sudut foto · Lokasi GPS · Riwayat penanganan','3 photo angles ·
+      GPS location · Status history') }}
+    </div>
+  </div>
+  <div class="roadart" aria-label="Ilustrasi jalan">
+    <div class="roadline"></div>
+    <div class="pothole"><span>Potholes</span></div>
+    <div class="artcard">
+      <span class="dot"></span>{{ t('Dokumentasi membantu
+      verifikasi','Documentation helps verification') }}<small
+        >{{ t('Keputusan akhir oleh petugas dinas','Final assessment by
+        authorized staff') }}</small
+      >
+    </div>
+  </div>
+</section>
+<section id="how">
+  <span class="eyebrow">{{ t('MUDAH DIIKUTI','EASY TO FOLLOW') }}</span>
+  <h2>{{ t('Dari foto hingga tindak lanjut','From photos to follow-up') }}</h2>
+  <div class="grid3">
+    {% for n,title,body in [('01',t('Ambil tiga foto','Take three
+    photos'),t('Foto sisi kiri, kanan, dan tampak atas. Pastikan lubang terlihat
+    jelas.','Photograph the left, right, and top views with the pothole clearly
+    visible.')),('02',t('Periksa laporan','Review the report'),t('Setelah
+    laporan tersimpan, periksa hasil deteksi dan narasinya.','After the report
+    is saved, review its detections and narrative.')),('03',t('Pantau
+    penanganan','Track progress'),t('Petugas memverifikasi laporan. Perubahan
+    status tampil di riwayatmu.','Staff verify the report. Status changes appear
+    in your history.'))] %}
+    <article class="card">
+      <span class="step">{{ n }}</span>
+      <h3>{{ title }}</h3>
+      <p>{{ body }}</p>
+    </article>
+    {% endfor %}
+  </div>
+</section>
 {% endblock %}
