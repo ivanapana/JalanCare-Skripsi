@@ -1,65 +1,36 @@
 {% extends 'base.html' %}{% block content %}
 <section class="hero">
   <div>
-    <span class="eyebrow"
-      >{{ t('JALAN LEBIH BAIK, BERSAMA','BETTER ROADS, TOGETHER') }}</span
-    >
-    <h1>
-      {{ t('Satu Jalan.','One report.') }}<br />{{ t(' Langkah menuju','A step
-      toward ') }}<br /><em
-        >{{ t(' jalan yang lebih aman.','safer roads.') }}</em
-      >
-    </h1>
-    <p>
-      {{ t('Dokumentasikan lubang jalan, pastikan lokasi, dan pantau tindak
-      lanjutnya. Untuk ruas jalan provinsi di Sulawesi Utara.','Document
-      potholes, confirm their location, and track follow-up on provincial roads
-      in North Sulawesi.') }}
-    </p>
+    <span class="eyebrow">{{ t('PELAPORAN JALAN PROVINSI · SULAWESI UTARA','PROVINCIAL ROAD REPORTING · NORTH SULAWESI') }}</span>
+    <h1>{{ t('Jalan yang lebih baik','Better roads') }}<br><em>{{ t('dimulai dari laporanmu.','start with your report.') }}</em></h1>
+    <p>{{ t('Dokumentasikan lubang jalan dari tiga sudut. JalanCare membantu mendeteksi lubang dan menyusun laporan untuk diperiksa petugas dinas.','Photograph potholes from three angles. JalanCare helps detect potholes and prepare reports for review by authorized staff.') }}</p>
     <div class="actions">
-      <a
-        class="button"
-        href="{{ url_for('new_report') if user and user.role=='warga' else url_for('dashboard') if user else url_for('register') }}"
-        >{{ t('Mulai laporkan →','Start reporting →') }}</a
-      ><a class="button secondary" href="#how"
-        >{{ t('Cara kerja','How it works') }}</a
-      >
+      <a class="button" href="{{ url_for('new_report') if user and user.role=='warga' else url_for('dashboard') if user else url_for('register') }}">{{ t('Buka dashboard','Open dashboard') if user and user.role=='petugas' else t('Mulai laporkan','Start reporting') }} <span aria-hidden="true">→</span></a>
+      <a class="button secondary" href="#how">{{ t('Lihat cara kerja','How it works') }}</a>
     </div>
-    <div class="herofoot">
-      {{ t('3 sudut foto · Lokasi GPS · Riwayat penanganan','3 photo angles ·
-      GPS location · Status history') }}
-    </div>
+    <div class="herofoot">{{ t('3 foto asli · Lokasi GPS foto · Status penanganan','3 original photos · Photo GPS location · Handling status') }}</div>
   </div>
-  <div class="roadart" aria-label="Ilustrasi jalan">
-    <div class="roadline"></div>
-    <div class="pothole"><span>Potholes</span></div>
-    <div class="artcard">
-      <span class="dot"></span>{{ t('Dokumentasi membantu
-      verifikasi','Documentation helps verification') }}<small
-        >{{ t('Keputusan akhir oleh petugas dinas','Final assessment by
-        authorized staff') }}</small
-      >
-    </div>
-  </div>
+  <figure class="road-visual" style="margin:0">
+    <span class="visual-label">{{ t('DARI FOTO MENJADI LAPORAN','FROM PHOTOS TO REPORTS') }}</span>
+    <svg viewBox="0 0 420 300" role="img" aria-labelledby="road-title"><title id="road-title">{{ t('Ilustrasi deteksi lubang pada jalan, bukan hasil pengujian model','Illustration of road pothole detection, not a model test result') }}</title>
+      <path d="M35 295 155 5h110l120 290" fill="#b4c7d8"/><path d="M58 295 166 5h88l108 290" fill="#3d5468"/>
+      <path d="m210 18 0 32m0 24v38m0 26v42m0 28v65" stroke="#d6e1ea" stroke-width="5"/>
+      <path d="M178 182c-21-11-39 0-47 16-7 21 8 34 27 32 23 4 43-5 48-20 4-14-13-25-28-28Z" fill="#1d3345"/>
+      <rect x="116" y="168" width="103" height="72" rx="4" fill="none" stroke="#8bd3e4" stroke-width="2"/>
+      <path d="M116 182v-14h14m75 0h14v14m0 44v14h-14m-75 0h-14v-14" fill="none" stroke="#c5f2fb" stroke-width="4"/>
+      <path d="M225 198h48l24-27" fill="none" stroke="#1766ae" stroke-width="2"/>
+      <rect x="265" y="137" width="141" height="40" rx="7" fill="white" stroke="#adc5db"/>
+      <text x="278" y="162" fill="#174d80" font-family="Segoe UI,Arial,sans-serif" font-size="12">{{ t('Area deteksi lubang','Pothole detection area') }}</text>
+    </svg>
+    <figcaption class="visual-caption">{{ t('Ilustrasi alur deteksi. Laporan dan hasil pemeriksaan dapat dipantau melalui akun pengguna.','Detection illustration. Reports and inspection results can be tracked through your account.') }}</figcaption>
+  </figure>
 </section>
-<section id="how">
-  <span class="eyebrow">{{ t('MUDAH DIIKUTI','EASY TO FOLLOW') }}</span>
-  <h2>{{ t('Dari foto hingga tindak lanjut','From photos to follow-up') }}</h2>
+<section id="how" class="home-steps">
+  <span class="eyebrow">{{ t('ALUR PELAPORAN','REPORTING PROCESS') }}</span>
+  <h2>{{ t('Dari dokumentasi ke tindak lanjut','From documentation to follow-up') }}</h2>
   <div class="grid3">
-    {% for n,title,body in [('01',t('Ambil tiga foto','Take three
-    photos'),t('Foto sisi kiri, kanan, dan tampak atas. Pastikan lubang terlihat
-    jelas.','Photograph the left, right, and top views with the pothole clearly
-    visible.')),('02',t('Periksa laporan','Review the report'),t('Setelah
-    laporan tersimpan, periksa hasil deteksi dan narasinya.','After the report
-    is saved, review its detections and narrative.')),('03',t('Pantau
-    penanganan','Track progress'),t('Petugas memverifikasi laporan. Perubahan
-    status tampil di riwayatmu.','Staff verify the report. Status changes appear
-    in your history.'))] %}
-    <article class="card">
-      <span class="step">{{ n }}</span>
-      <h3>{{ title }}</h3>
-      <p>{{ body }}</p>
-    </article>
+    {% for n,title,body in [('01',t('Siapkan tiga foto','Prepare three photos'),t('Ambil sisi kiri, kanan, dan tampak atas. Gunakan foto asli dengan GPS dan pastikan lubang terlihat jelas.','Take left, right and top views. Use original photos with GPS and keep the pothole clearly visible.')),('02',t('Kirim dan periksa hasil','Submit and review'),t('Sistem memeriksa lokasi dan foto, lalu menyimpan laporan jika memenuhi ketentuan. Periksa hasil deteksi serta narasi yang dibuat.','The system checks the location and photos, then saves eligible reports. Review the detection results and generated narrative.')),('03',t('Pantau penanganan','Track progress'),t('Petugas memverifikasi laporan dan memperbarui statusnya. Lihat perkembangan serta catatan petugas di riwayat laporan.','Staff verify reports and update their status. View progress and staff notes in your report history.'))] %}
+    <article class="card"><span class="step">{{ n }}</span><h3>{{ title }}</h3><p>{{ body }}</p></article>
     {% endfor %}
   </div>
 </section>

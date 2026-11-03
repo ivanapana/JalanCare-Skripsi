@@ -17,6 +17,7 @@ class FakeDetector:
 @pytest.fixture
 def setup(tmp_path):
     store=LocalStore(tmp_path/'db.sqlite');app=create_app(dict(TESTING=True,PRIVATE=tmp_path,STORE=store,DETECTOR=FakeDetector(),PRIVACY_DETECTOR=FakePrivacy(),MODE='demo',LOCATION_LOOKUP=lambda a,b:dict(alamatLokasi='Tondano, Kabupaten Minahasa, Sulawesi Utara',daerah='Tondano',kabupaten='Minahasa',locationLookup='test')))
+    app.config['FIRST_STAFF_UID']=next(u['uid'] for u in store.users() if u['role']=='petugas')
     return app,store
 
 def token(client,path='/'):
@@ -94,17 +95,17 @@ def test_accounts_and_public_role(setup):
 def test_languages(setup):
     app,_=setup;c=app.test_client()
     c.post('/language',data=dict(csrf=token(c),lang='en'))
-    assert b'BETTER ROADS' in c.get('/').data
+    assert b'PROVINCIAL ROAD REPORTING' in c.get('/').data
 
 def test_gemini_invalid_output_and_fallback(monkeypatch):
     from narrative import generate
     from google import genai
     from types import SimpleNamespace
     report=dict(namaJalan='Uji',kabupaten='Minahasa',latitude=1.4,longitude=124.9,timestamp='2026-10-04',keterangan='',foto=[dict(angle='kiri',boxes=[])])
-    monkeypatch.setattr(genai,'Client',lambda **kwargs:SimpleNamespace(models=SimpleNamespace(generate_content=lambda **kwargs:SimpleNamespace(text='{"deskripsi":123,"tindakLanjut":"x"}'))))
+    monkeypatch.setattr(genai,'Client',lambda **kwargs:SimpleNamespace(interactions=SimpleNamespace(create=lambda **kwargs:SimpleNamespace(output_text='{"deskripsi":123,"tindakLanjut":"x"}'))))
     text,source,warning=generate(report,'test-not-a-real-key','test-model')
     assert source=='template' and warning and 'SDI' in text
-    monkeypatch.setattr(genai,'Client',lambda **kwargs:SimpleNamespace(models=SimpleNamespace(generate_content=lambda **kwargs:SimpleNamespace(text='{"deskripsi":"Indikasi lubang.","tindakLanjut":"Periksa lapangan."}'))))
+    monkeypatch.setattr(genai,'Client',lambda **kwargs:SimpleNamespace(interactions=SimpleNamespace(create=lambda **kwargs:SimpleNamespace(output_text='{"deskripsi":"Indikasi lubang.","tindakLanjut":"Periksa lapangan."}'))))
     text,source,warning=generate(report,'test-not-a-real-key','test-model')
     assert source=='gemini' and warning is None
 
@@ -176,7 +177,7 @@ def test_location_visible_before_analysis(setup):
     r=c.post('/api/photos/location',data=dict(csrf=token(c,'/report/new'),photos=[(photo(),'a.jpg'),(photo(),'b.jpg'),(photo(),'c.jpg')]),content_type='multipart/form-data')
     assert r.status_code==200 and r.json['source']=='EXIF' and r.json['daerah']=='Tondano'
     assert not store.reports()
-    assert 'Revisi 2.8'.encode() in c.get('/report/new').data
+    assert 'Revisi 2.8'.encode() not in c.get('/report/new').data
 
 def test_revision23_translation_viewer_and_map_policy(setup):
     app,store=setup;c=app.test_client();login(c,'warga')
@@ -192,14 +193,15 @@ def test_revision23_translation_viewer_and_map_policy(setup):
     stored=store.report(rid)
     assert stored['narasiLaporan']=='Draf uji tanpa pengukuran.'
     store.update_report(rid,{'kabupaten':'Belum teridentifikasi'})
-    assert 'Unidentified' in c.get('/dashboard').get_data(as_text=True)
+    assert 'Unidentified' not in c.get('/dashboard').get_data(as_text=True)
+    assert store.report(rid)['kabupaten']=='Belum teridentifikasi'
     duplicate_page=c.get(analyze(c).location).get_data(as_text=True)
     assert 'An active report exists within 30 metres' in duplicate_page
     assert 'Ada laporan aktif dalam radius' not in duplicate_page
     staff=app.test_client();login(staff,'petugas')
     with staff.session_transaction() as session:session['lang']='en'
     stats=staff.get('/statistics').get_data(as_text=True)
-    assert 'Unidentified' in stats and 'Location list / alternative' in stats
+    assert 'Unidentified' not in stats and 'Area unavailable' in stats and 'Location list / alternative' in stats
     assert 'data-tiles="https://tile.openstreetmap.org/' in stats
 
 
@@ -448,6 +450,63 @@ def test_gemini_does_not_accept_invented_physical_measurements(monkeypatch):
     from google import genai
     from types import SimpleNamespace
     report={'namaJalan':'Jalan Uji','kabupaten':'Minahasa','latitude':1.4,'longitude':124.9,'timestamp':'2026-10-14','keterangan':'','foto':[{'angle':'foto1','boxes':[]}]}
-    monkeypatch.setattr(genai,'Client',lambda **kw:SimpleNamespace(models=SimpleNamespace(generate_content=lambda **kw:SimpleNamespace(text='{"deskripsi":"Lubang memiliki kedalaman 10 cm dan SDI 200.","tindakLanjut":"Prioritas tinggi."}'))))
+    monkeypatch.setattr(genai,'Client',lambda **kw:SimpleNamespace(interactions=SimpleNamespace(create=lambda **kw:SimpleNamespace(output_text='{"deskripsi":"Lubang memiliki kedalaman 10 cm dan SDI 200.","tindakLanjut":"Prioritas tinggi."}'))))
     text,source,warning=generate(report,'test-key','test-model')
     assert source=='template' and warning and '10 cm' not in text and 'SDI 200' not in text
+
+
+def test_only_pinned_staff_can_manage_accounts(setup):
+    app,store=setup
+    secondary=store.create_user('second@example.test','password123','Second','petugas')
+    c=app.test_client()
+    c.post('/login/petugas',data=dict(csrf=token(c,'/login/petugas'),email=secondary['email'],password='password123'))
+    assert c.get('/dashboard').status_code==200
+    assert b'href="/users"' not in c.get('/dashboard').data
+    assert c.get('/users').status_code==403
+    original=store.user(app.config['FIRST_STAFF_UID'])
+    with c.session_transaction() as session:csrf=session['csrf']
+    for action in ('create','update','delete'):
+        response=c.post('/users',data=dict(csrf=csrf,action=action,uid=original['uid'],nama='Attack',email='attack@example.test',password='password123',role='petugas'))
+        assert response.status_code==403
+    assert store.user(original['uid'])==original
+    assert len(store.users())==3
+
+
+def test_account_admin_requires_configured_current_staff(setup):
+    app,store=setup;c=app.test_client();login(c,'petugas')
+    app.config['FIRST_STAFF_UID']=''
+    assert c.get('/users').status_code==403
+    resident=next(u for u in store.users() if u['role']=='warga')
+    app.config['FIRST_STAFF_UID']=resident['uid']
+    login(c,'warga');assert c.get('/users').status_code==403
+
+
+def test_footer_roles_and_all_templates_compile(setup):
+    app,store=setup;c=app.test_client()
+    assert b'AI drafts are reviewed by staff.' not in c.get('/').data
+    assert 'Draf AI diperiksa petugas.' not in c.get('/').text
+    login(c,'petugas');page=c.get('/users')
+    assert page.status_code==200
+    assert 'role-warga' in page.text and 'role-petugas' in page.text
+    for name in app.jinja_env.list_templates():app.jinja_env.get_template(name)
+
+
+def test_location_ui_preserves_data_and_counts(setup):
+    app,store=setup;resident=app.test_client();staff=app.test_client();login(resident,'warga')
+    response=analyze(resident);rid=response.location.rsplit('/',1)[-1]
+    store.update_report(rid,dict(kabupaten='Belum Teridentifikasi',daerah='Airmadidi'))
+    page=resident.get('/dashboard').text
+    assert 'Airmadidi' in page and 'Belum Teridentifikasi' not in page
+    login(staff,'petugas');stats=staff.get('/statistics').text
+    assert 'Wilayah belum tersedia' in stats and 'Belum Teridentifikasi' not in stats
+    assert store.report(rid)['kabupaten']=='Belum Teridentifikasi'
+    assert len(store.reports())==1
+
+
+def test_skip_navigation_and_responsive_shared_components(setup):
+    app,store=setup;client=app.test_client()
+    page=client.get('/').text
+    assert 'href="#main-content"' in page and 'id="main-content"' in page
+    assert 'Revisi 2.8' not in page
+    assert 'fonts.googleapis.com' not in client.get('/static/style.css').text
+    for template in app.jinja_env.list_templates():app.jinja_env.get_template(template)

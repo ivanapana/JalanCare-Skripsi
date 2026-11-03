@@ -1,0 +1,250 @@
+{
+  "checks": [
+    {
+      "path": "/",
+      "status": 200,
+      "width": 1440,
+      "doc": 1440,
+      "title": "Jalan yang lebih baikdimulai dari laporanmu.",
+      "unknown": false
+    },
+    {
+      "interaction": "keyboard skip link",
+      "passed": true
+    },
+    {
+      "interaction": "skip to main",
+      "passed": true
+    },
+    {
+      "path": "/login",
+      "status": 200,
+      "width": 1440,
+      "doc": 1440,
+      "title": "Masuk warga/pelapor",
+      "unknown": false
+    },
+    {
+      "path": "/report/new",
+      "status": 200,
+      "width": 1440,
+      "doc": 1440,
+      "title": "Unggah 3 foto kerusakan jalan",
+      "unknown": false
+    },
+    {
+      "interaction": "invalid upload validation",
+      "passed": true
+    },
+    {
+      "path": "/dashboard",
+      "status": 200,
+      "width": 1440,
+      "doc": 1440,
+      "title": "Riwayat laporan saya",
+      "unknown": false
+    },
+    {
+      "path": "/report/97a5930bf2c3472b8408af5bfa589a27",
+      "status": 200,
+      "width": 1440,
+      "doc": 1440,
+      "title": "Detail laporan",
+      "unknown": false
+    },
+    {
+      "interaction": "photo tab switch",
+      "passed": true
+    },
+    {
+      "interaction": "photo dialog",
+      "passed": true
+    },
+    {
+      "path": "/login/petugas",
+      "status": 200,
+      "width": 1440,
+      "doc": 1440,
+      "title": "Masuk petugas dinas",
+      "unknown": false
+    },
+    {
+      "path": "/dashboard",
+      "status": 200,
+      "width": 1440,
+      "doc": 1440,
+      "title": "Dashboard laporan masuk",
+      "unknown": false
+    },
+    {
+      "interaction": "status filter",
+      "passed": true
+    },
+    {
+      "path": "/statistics",
+      "status": 200,
+      "width": 1440,
+      "doc": 1440,
+      "title": "Rekap & statistik kerusakan jalan",
+      "unknown": false
+    },
+    {
+      "path": "/users",
+      "status": 200,
+      "width": 1440,
+      "doc": 1440,
+      "title": "Manajemen akun",
+      "unknown": false
+    },
+    {
+      "roles": [
+        {
+          "text": "Warga",
+          "bg": "rgb(232, 246, 247)",
+          "color": "rgb(21, 94, 102)"
+        },
+        {
+          "text": "Petugas",
+          "bg": "rgb(241, 237, 252)",
+          "color": "rgb(96, 59, 148)"
+        },
+        {
+          "text": "Petugas",
+          "bg": "rgb(241, 237, 252)",
+          "color": "rgb(96, 59, 148)"
+        }
+      ]
+    },
+    {
+      "interaction": "account details expand",
+      "passed": true
+    },
+    {
+      "path": "/dashboard",
+      "status": 200,
+      "width": 768,
+      "doc": 768,
+      "title": "Dashboard laporan masuk",
+      "unknown": false
+    },
+    {
+      "path": "/users",
+      "status": 200,
+      "width": 768,
+      "doc": 768,
+      "title": "Manajemen akun",
+      "unknown": false
+    },
+    {
+      "path": "/statistics",
+      "status": 200,
+      "width": 768,
+      "doc": 768,
+      "title": "Rekap & statistik kerusakan jalan",
+      "unknown": false
+    },
+    {
+      "path": "/report/97a5930bf2c3472b8408af5bfa589a27",
+      "status": 200,
+      "width": 768,
+      "doc": 768,
+      "title": "Detail laporan",
+      "unknown": false
+    },
+    {
+      "path": "/dashboard",
+      "status": 200,
+      "width": 390,
+      "doc": 390,
+      "title": "Dashboard laporan masuk",
+      "unknown": false
+    },
+    {
+      "path": "/users",
+      "status": 200,
+      "width": 390,
+      "doc": 390,
+      "title": "Manajemen akun",
+      "unknown": false
+    },
+    {
+      "path": "/statistics",
+      "status": 200,
+      "width": 390,
+      "doc": 390,
+      "title": "Rekap & statistik kerusakan jalan",
+      "unknown": false
+    },
+    {
+      "path": "/report/97a5930bf2c3472b8408af5bfa589a27",
+      "status": 200,
+      "width": 390,
+      "doc": 390,
+      "title": "Detail laporan",
+      "unknown": false
+    },
+    {
+      "path": "/",
+      "status": 200,
+      "width": 390,
+      "doc": 390,
+      "title": "Jalan yang lebih baikdimulai dari laporanmu.",
+      "unknown": false
+    },
+    {
+      "path": "/register",
+      "status": 200,
+      "width": 390,
+      "doc": 390,
+      "title": "Registrasi akun warga/pelapor",
+      "unknown": false
+    },
+    {
+      "path": "/login",
+      "status": 200,
+      "width": 390,
+      "doc": 390,
+      "title": "Masuk warga/pelapor",
+      "unknown": false
+    },
+    {
+      "path": "/report/new",
+      "status": 200,
+      "width": 390,
+      "doc": 390,
+      "title": "Unggah 3 foto kerusakan jalan",
+      "unknown": false
+    },
+    {
+      "path": "/report/new",
+      "status": 200,
+      "width": 320,
+      "doc": 320,
+      "title": "Unggah 3 foto kerusakan jalan",
+      "unknown": false
+    },
+    {
+      "path": "/dashboard?start=2099-01-01",
+      "status": 200,
+      "width": 320,
+      "doc": 320,
+      "title": "Riwayat laporan saya",
+      "unknown": false
+    },
+    {
+      "path": "/missing-page-qa",
+      "status": 404,
+      "width": 320,
+      "doc": 320,
+      "title": "Proses belum dapat dilanjutkan",
+      "unknown": false
+    },
+    {
+      "interaction": "browser interaction assertions",
+      "passed": true
+    }
+  ],
+  "errors": [],
+  "externalRequests": "Leaflet/tile requests blocked intentionally to test fallback",
+  "testData": "Isolated SQLite demo fixture. Synthetic accounts/reports and injected detector only in QA runner outside deliverable."
+}

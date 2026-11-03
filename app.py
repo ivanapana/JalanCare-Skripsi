@@ -28,6 +28,7 @@ REGIONS=['Manado','Bitung','Tomohon','Kotamobagu','Minahasa','Minahasa Utara','M
 def create_app(config=None):
     app=Flask(__name__)
     app.config.update(MAX_CONTENT_LENGTH=32*1024*1024,SESSION_COOKIE_HTTPONLY=True,SESSION_COOKIE_SAMESITE='Lax',SESSION_COOKIE_SECURE=os.getenv('COOKIE_SECURE','false').lower()=='true',PERMANENT_SESSION_LIFETIME=timedelta(hours=8),MODE=os.getenv('APP_MODE','demo'),PRIVATE=BASE/'private',MODEL_PATH=Path(os.getenv('MODEL_PATH',str(BASE/'models/best_potholes.pt'))),CONFIDENCE=float(os.getenv('YOLO_CONFIDENCE','0.25')))
+    app.config['FIRST_STAFF_UID']=os.getenv('FIRST_STAFF_UID','').strip()
     if config:app.config.update(config)
     private=Path(app.config['PRIVATE']);private.mkdir(exist_ok=True,parents=True)
     key=os.getenv('SECRET_KEY')
@@ -98,8 +99,17 @@ def create_app(config=None):
             token=request.form.get('csrf') or request.headers.get('X-CSRF-Token','')
             if not token or not secrets.compare_digest(token,session.get('csrf','')):abort(400,description='Sesi formulir kedaluwarsa. Muat ulang halaman.')
     def ui_text(value):return translate(value,session.get('lang','id'))
+    def location_text(value, fallback=''):
+        # Presentation only: keep original location fields and aggregation keys intact.
+        text=str(value or '').strip()
+        if text.casefold() in ('', 'belum teridentifikasi', 'unidentified', 'unknown', 'none', 'null'):
+            return fallback
+        return ui_text(text)
+    def can_manage_accounts():
+        uid=app.config.get('FIRST_STAFF_UID','')
+        return bool(uid and g.user and g.user.get('role')=='petugas' and g.user.get('uid')==uid)
     @app.context_processor
-    def inject():return dict(status_text=lambda s:STATUS_EN.get(s,s) if session.get('lang','id')=='en' else s,photo_text=lambda s:PHOTO_LABELS.get(s,(s,s))[1 if session.get('lang','id')=='en' else 0],badge_class=lambda s:{'Selesai':'done','Sedang Ditangani':'working','Ditolak':'rejected'}.get(s,''),user=g.user,csrf=csrf,version='2.8',dinas_groups=DINAS_GROUPS,dinas_meta=DINAS_META,dinas_numbers=DINAS_NUMBERS,dinas_option=lambda v:EN_OPTIONS.get(v,v) if session.get('lang')=='en' else v,hole_class=hole_class,categories=CATEGORIES,category_text=lambda c:CATEGORY_EN.get(c,'Previous category — reassessment required') if session.get('lang')=='en' else category_display(c),ui_text=ui_text,english_summary=english_summary,disclaimer_en=DISCLAIMER_EN,map_tiles=os.getenv('MAP_TILE_URL','https://tile.openstreetmap.org/{z}/{x}/{y}.png'),map_attribution=os.getenv('MAP_ATTRIBUTION','© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'),mode=app.config['MODE'],statuses=STATUSES,regions=REGIONS,lang=session.get('lang','id'),t=lambda a,b:a if session.get('lang','id')=='id' else b,confidence=app.config['CONFIDENCE'])
+    def inject():return dict(status_text=lambda s:STATUS_EN.get(s,s) if session.get('lang','id')=='en' else s,photo_text=lambda s:PHOTO_LABELS.get(s,(s,s))[1 if session.get('lang','id')=='en' else 0],badge_class=lambda s:{'Selesai':'done','Sedang Ditangani':'working','Ditolak':'rejected'}.get(s,''),user=g.user,csrf=csrf,version='2.8',dinas_groups=DINAS_GROUPS,dinas_meta=DINAS_META,dinas_numbers=DINAS_NUMBERS,dinas_option=lambda v:EN_OPTIONS.get(v,v) if session.get('lang')=='en' else v,hole_class=hole_class,categories=CATEGORIES,category_text=lambda c:CATEGORY_EN.get(c,'Previous category — reassessment required') if session.get('lang')=='en' else category_display(c),ui_text=ui_text,location_text=location_text,english_summary=english_summary,disclaimer_en=DISCLAIMER_EN,map_tiles=os.getenv('MAP_TILE_URL','https://tile.openstreetmap.org/{z}/{x}/{y}.png'),map_attribution=os.getenv('MAP_ATTRIBUTION','© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'),can_manage_accounts=can_manage_accounts(),mode=app.config['MODE'],statuses=STATUSES,regions=REGIONS,lang=session.get('lang','id'),t=lambda a,b:a if session.get('lang','id')=='id' else b,confidence=app.config['CONFIDENCE'])
     @app.after_request
     def headers(response):
         response.headers['X-Content-Type-Options']='nosniff';response.headers['X-Frame-Options']='DENY';response.headers['Referrer-Policy']='strict-origin-when-cross-origin'
@@ -338,6 +348,7 @@ def create_app(config=None):
     @app.route('/users',methods=['GET','POST'])
     @protected('petugas')
     def users():
+        if not can_manage_accounts():abort(403,description='Pengelolaan akun hanya untuk petugas utama.')
         if request.method=='POST':
             try:
                 action=request.form.get('action');uid=request.form.get('uid');role=request.form.get('role')
